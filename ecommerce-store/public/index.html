@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zeloa Cart - Home</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Instant scroll restore - hide body until scroll is set */
+    body.restoring { visibility: hidden; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🌿 Zeloa Cart</a>
+    <div class="nav-links">
+      <span id="hello-user" class="hello-user" style="display:none"></span>
+      <a href="index.html">Home</a>
+      <a href="orders.html" id="orders-link" style="display:none">My Orders</a>
+      <a href="login.html" id="login-link">Login</a>
+      <a href="wishlist.html">❤️ Wishlist (<span id="wishlist-count">0</span>)</a>
+      <a href="#" id="logout-link" style="display:none" onclick="logout()">Logout</a>
+      <a href="cart.html" class="cart-btn">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-dots"></div>
+    <div class="hero-glow"></div>
+    <h1>Shop <span>Smarter,</span><br/>Live Better.</h1>
+    <p>Discover thousands of products at unbeatable prices — delivered fast! 🚚</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>50K+</strong><span>Products</span></div>
+      <div class="hero-stat"><strong>4.9★</strong><span>Rated</span></div>
+      <div class="hero-stat"><strong>2-Day</strong><span>Delivery</span></div>
+      <div class="hero-stat"><strong>100%</strong><span>Secure</span></div>
+    </div>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">🚀 Shop Now</a>
+      <a href="#categories" class="btn-outline">Browse Categories</a>
+    </div>
+  </div>
+
+  <!-- FEATURES STRIP -->
+  <div class="features-strip">
+    <div class="feature-item"><div class="feature-icon">🚚</div><div class="feature-text"><strong>Free Delivery</strong><span>On orders above ₹999</span></div></div>
+    <div class="feature-item"><div class="feature-icon">🔄</div><div class="feature-text"><strong>Easy Returns</strong><span>7-day hassle-free returns</span></div></div>
+    <div class="feature-item"><div class="feature-icon">🔒</div><div class="feature-text"><strong>Secure Payments</strong><span>100% safe & encrypted</span></div></div>
+    <div class="feature-item"><div class="feature-icon">💬</div><div class="feature-text"><strong>24/7 Support</strong><span>Always here to help</span></div></div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="categories" id="categories">
+    <button class="cat-pill active" onclick="filterCategory('all', this)">🛍️ All</button>
+    <button class="cat-pill" onclick="filterCategory('Footwear', this)">👟 Footwear</button>
+    <button class="cat-pill" onclick="filterCategory('Electronics', this)">🎧 Electronics</button>
+    <button class="cat-pill" onclick="filterCategory('Fashion', this)">👜 Fashion</button>
+    <button class="cat-pill" onclick="filterCategory('Accessories', this)">⌚ Accessories</button>
+    <button class="cat-pill" onclick="filterCategory('Mobiles', this)">📱 Mobiles</button>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="section" id="products">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Handpicked deals just for you 🎯</p>
+      </div>
+      <a href="#" class="see-all">See all →</a>
+    </div>
+    <div class="products-grid" id="products-grid">
+      <p style="color:#888;">Loading products...</p>
+    </div>
+  </div>
+
+  <!-- PROMO BANNER -->
+  <div class="promo-banner">
+    <div>
+      <h3>🎉 New User Deal!</h3>
+      <p>Register today and get 15% off on your very first order!</p>
+    </div>
+    <button class="promo-btn" onclick="window.location.href='register.html'">Claim Now →</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2rem;max-width:960px;margin:0 auto 2rem;text-align:left;">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:#5DCAA5;margin-bottom:0.75rem;">🌿 Zeloa Cart</div>
+        <p style="color:#9FE1CB;font-size:13px;line-height:1.7;">Your one-stop destination for all your shopping needs. Quality products, unbeatable prices.</p>
+      </div>
+      <div>
+        <div style="font-weight:700;color:white;margin-bottom:0.75rem;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Quick Links</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a href="index.html" class="footer-link-btn">🏠 Home</a>
+          <a href="wishlist.html" class="footer-link-btn">❤️ Wishlist</a>
+          <a href="cart.html" class="footer-link-btn">🛒 Cart</a>
+          <a href="orders.html" class="footer-link-btn">📦 My Orders</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;color:white;margin-bottom:0.75rem;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Company</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button onclick="openModal('about-modal')" class="footer-link-btn">ℹ️ About Us</button>
+          <button onclick="openModal('privacy-modal')" class="footer-link-btn">🔒 Privacy Policy</button>
+          <button onclick="openModal('terms-modal')" class="footer-link-btn">📋 Terms & Conditions</button>
+          <button onclick="openModal('contact-modal')" class="footer-link-btn">💬 Contact Us</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700;color:white;margin-bottom:0.75rem;font-size:13px;text-transform:uppercase;letter-spacing:1px;">Contact</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#9FE1CB;">
+          <span>📧 support@shopeasy.in</span>
+          <span>📞 +91 98765 43210</span>
+          <span>📍 Chennai, Tamil Nadu 🇮🇳</span>
+          <span>🕐 Mon–Sat, 9AM–6PM IST</span>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(93,202,165,0.2);padding-top:1.5rem;text-align:center;">
+      <p style="color:#5DCAA5;">© 2026 Zeloa Cart — Made with 💚 for CodeAlpha Internship</p>
+    </div>
+  </footer>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ABOUT MODAL -->
+  <div id="about-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:520px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h3>🌿 About Zeloa Cart</h3>
+        <button onclick="closeModal('about-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <p style="color:#555;line-height:1.8;font-size:15px;">Zeloa Cart is your one-stop destination for all your shopping needs. Founded in 2026, we bring you the best products at the most competitive prices.</p>
+      <br/>
+      <p style="color:#555;line-height:1.8;font-size:15px;">From fashion to electronics, footwear to accessories — we have it all! With over 50,000 products and a growing community of happy shoppers, ShopEasy is redefining online shopping in India.</p>
+      <br/>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div style="background:#E1F5EE;padding:1rem;border-radius:12px;text-align:center;"><strong style="display:block;font-size:22px;color:#04342C;">50K+</strong><span style="font-size:13px;color:#555;">Products</span></div>
+        <div style="background:#E1F5EE;padding:1rem;border-radius:12px;text-align:center;"><strong style="display:block;font-size:22px;color:#04342C;">10K+</strong><span style="font-size:13px;color:#555;">Happy Customers</span></div>
+        <div style="background:#E1F5EE;padding:1rem;border-radius:12px;text-align:center;"><strong style="display:block;font-size:22px;color:#04342C;">4.9★</strong><span style="font-size:13px;color:#555;">Average Rating</span></div>
+        <div style="background:#E1F5EE;padding:1rem;border-radius:12px;text-align:center;"><strong style="display:block;font-size:22px;color:#04342C;">2-Day</strong><span style="font-size:13px;color:#555;">Fast Delivery</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY MODAL -->
+  <div id="privacy-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:520px;max-height:80vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h3>🔒 Privacy Policy</h3>
+        <button onclick="closeModal('privacy-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <p style="color:#888;font-size:12px;margin-bottom:1rem;">Last updated: May 2026</p>
+      <div style="color:#555;font-size:14px;line-height:1.8;">
+        <strong style="color:#04342C;">1. Information We Collect</strong>
+        <p style="margin:6px 0 14px;">We collect your name, email address, and shipping address when you register or place an order.</p>
+        <strong style="color:#04342C;">2. How We Use Your Information</strong>
+        <p style="margin:6px 0 14px;">Your information is used solely to process orders and improve your shopping experience.</p>
+        <strong style="color:#04342C;">3. Data Security</strong>
+        <p style="margin:6px 0 14px;">We use industry-standard encryption. Your password is securely hashed and never stored in plain text.</p>
+        <strong style="color:#04342C;">4. Cookies</strong>
+        <p style="margin:6px 0 14px;">We use localStorage to save your cart and session data for a seamless experience.</p>
+        <strong style="color:#04342C;">5. Contact Us</strong>
+        <p style="margin:6px 0;">For privacy concerns, email us at privacy@zeloacart.in</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TERMS MODAL -->
+  <div id="terms-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:520px;max-height:80vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h3>📋 Terms & Conditions</h3>
+        <button onclick="closeModal('terms-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <p style="color:#888;font-size:12px;margin-bottom:1rem;">Last updated: May 2026</p>
+      <div style="color:#555;font-size:14px;line-height:1.8;">
+        <strong style="color:#04342C;">1. Acceptance of Terms</strong>
+        <p style="margin:6px 0 14px;">By using Zeloa Cart, you agree to these terms. Please read them carefully before making a purchase.</p>
+        <strong style="color:#04342C;">2. Orders & Payments</strong>
+        <p style="margin:6px 0 14px;">All orders are subject to product availability. Prices are in Indian Rupees (₹) and include GST.</p>
+        <strong style="color:#04342C;">3. Returns & Refunds</strong>
+        <p style="margin:6px 0 14px;">You may return products within 7 days of delivery for a full refund in original condition.</p>
+        <strong style="color:#04342C;">4. Delivery</strong>
+        <p style="margin:6px 0 14px;">Free delivery on orders above ₹999. Standard delivery takes 2-5 business days.</p>
+        <strong style="color:#04342C;">5. Account Responsibility</strong>
+        <p style="margin:6px 0;">You are responsible for maintaining the confidentiality of your account credentials.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT MODAL -->
+  <div id="contact-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:500px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h3>💬 Contact Us</h3>
+        <button onclick="closeModal('contact-modal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">
+        <div style="display:flex;align-items:center;gap:1rem;background:#E1F5EE;padding:1rem;border-radius:12px;"><span style="font-size:28px;">📧</span><div><strong style="display:block;color:#04342C;">Email</strong><span style="color:#555;font-size:14px;">support@shopeasy.in</span></div></div>
+        <div style="display:flex;align-items:center;gap:1rem;background:#E1F5EE;padding:1rem;border-radius:12px;"><span style="font-size:28px;">📞</span><div><strong style="display:block;color:#04342C;">Phone</strong><span style="color:#555;font-size:14px;">+91 98765 43210</span></div></div>
+        <div style="display:flex;align-items:center;gap:1rem;background:#E1F5EE;padding:1rem;border-radius:12px;"><span style="font-size:28px;">📍</span><div><strong style="display:block;color:#04342C;">Address</strong><span style="color:#555;font-size:14px;">Chennai, Tamil Nadu, India 🇮🇳</span></div></div>
+      </div>
+      <div class="form-group"><label>Your Message</label><input type="text" id="contact-msg" placeholder="Type your message here..." /></div>
+      <button class="checkout-btn" onclick="sendMessage()" style="margin-top:0.5rem;">Send Message 💬</button>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    // ─── INSTANT SCROLL RESTORE ───
+    (function() {
+      const scrollPos = sessionStorage.getItem('scrollPos');
+      if (scrollPos) {
+        document.body.classList.add('restoring');
+        window.addEventListener('load', function() {
+          window.scrollTo(0, parseInt(scrollPos));
+          sessionStorage.removeItem('scrollPos');
+          document.body.classList.remove('restoring');
+        });
+      }
+    })();
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+      // Remember scroll position so page stays put
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    }
+
+    function closeModal(id) {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function sendMessage() {
+      const msg = document.getElementById('contact-msg').value.trim();
+      if (!msg) { showToast('⚠️ Please type a message!'); return; }
+      document.getElementById('contact-msg').value = '';
+      closeModal('contact-modal');
+      showToast('✅ Message sent! We will get back to you soon.');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          const scrollY = document.body.style.top;
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.width = '';
+          window.scrollTo(0, parseInt(scrollY || '0') * -1);
+          this.classList.remove('open');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

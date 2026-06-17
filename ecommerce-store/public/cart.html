@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zeloa Cart - Cart</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">🌿 Zeloa Cart</a>
+    <div class="nav-links">
+      <span id="hello-user" class="hello-user" style="display:none"></span>
+      <a href="index.html">Home</a>
+      <a href="orders.html" id="orders-link" style="display:none">My Orders</a>
+      <a href="login.html" id="login-link">Login</a>
+      <a href="#" id="logout-link" style="display:none" onclick="logout()">Logout</a>
+      <a href="cart.html" class="cart-btn">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </div>
+  </nav>
+
+  <div class="cart-container">
+    <h2>🛒 Your Cart</h2>
+    <div id="cart-items"></div>
+    <div id="cart-summary" style="display:none">
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+        <div class="summary-row"><span>🚚 Delivery</span><span style="color:#1D9E75;">FREE</span></div>
+        <div class="summary-row"><span>GST (18%)</span><span id="gst">₹0</span></div>
+        <div class="summary-total"><span>Total</span><span id="total">₹0</span></div>
+        <button class="checkout-btn" onclick="checkout()">Proceed to Checkout 🎉</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- CHECKOUT MODAL -->
+  <div id="checkout-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>📦 Shipping Address</h3>
+      <div class="form-group"><label>Street</label><input type="text" id="street" placeholder="123 Main Street" /></div>
+      <div class="form-group"><label>City</label><input type="text" id="city" placeholder="Chennai" /></div>
+      <div class="form-group"><label>State</label><input type="text" id="state" placeholder="Tamil Nadu" /></div>
+      <div class="form-group"><label>ZIP Code</label><input type="text" id="zipCode" placeholder="600001" /></div>
+      <div style="display:flex; gap:1rem; margin-top:1rem;">
+        <button class="checkout-btn" onclick="placeOrder()" style="flex:1;">Place Order 🎉</button>
+        <button onclick="closeModal()" style="flex:1; padding:13px; background:#f5f5f5; border:none; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    function renderCart() {
+      const cart      = getCart();
+      const container = document.getElementById('cart-items');
+      const summary   = document.getElementById('cart-summary');
+
+      if (!cart.length) {
+        container.innerHTML = `<div class="empty-state"><span>🛒</span><h3>Your cart is empty!</h3><p>Looks like you haven't added anything yet.</p><br><a href="index.html">Start Shopping →</a></div>`;
+        summary.style.display = 'none'; return;
+      }
+
+      let subtotal = 0;
+      container.innerHTML = cart.map((item, i) => {
+        subtotal += item.price * item.quantity;
+        const imgHTML = item.image
+          ? `<img class="cart-item-img" src="${item.image}" alt="${item.name}" onerror="this.outerHTML='<div class=cart-item-emoji>${item.emoji||'📦'}</div>'" />`
+          : `<div class="cart-item-emoji">${item.emoji || '📦'}</div>`;
+        return `
+          <div class="cart-item">
+            ${imgHTML}
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <p>₹${item.price.toLocaleString()}</p>
+              <small style="color:#aaa;">${item.category}</small>
+            </div>
+            <div class="cart-qty">
+              <button class="qty-btn" onclick="changeQty(${i}, -1)">−</button>
+              <span style="font-weight:700; font-size:16px;">${item.quantity}</span>
+              <button class="qty-btn" onclick="changeQty(${i}, 1)">+</button>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-weight:700; color:#04342C; margin-bottom:6px;">₹${(item.price * item.quantity).toLocaleString()}</div>
+              <button class="remove-btn" onclick="removeItem(${i})">Remove</button>
+            </div>
+          </div>`;
+      }).join('');
+
+      const gst   = Math.round(subtotal * 0.18);
+      const total = subtotal + gst;
+      document.getElementById('subtotal').textContent = '₹' + subtotal.toLocaleString();
+      document.getElementById('gst').textContent      = '₹' + gst.toLocaleString();
+      document.getElementById('total').textContent    = '₹' + total.toLocaleString();
+      summary.style.display = 'block';
+    }
+
+    function changeQty(index, delta) {
+      const cart = getCart();
+      cart[index].quantity += delta;
+      if (cart[index].quantity <= 0) cart.splice(index, 1);
+      saveCart(cart); updateCartCount(); renderCart();
+    }
+
+    function removeItem(index) {
+      const cart = getCart();
+      cart.splice(index, 1);
+      saveCart(cart); updateCartCount(); renderCart();
+      showToast('Item removed from cart');
+    }
+
+    function checkout() {
+      if (!localStorage.getItem('token')) {
+        showToast('Please login to checkout!');
+        setTimeout(() => window.location.href = 'login.html', 1500); return;
+      }
+      document.getElementById('checkout-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('checkout-modal').classList.remove('open');
+    }
+
+    async function placeOrder() {
+      const token   = localStorage.getItem('token');
+      const cart    = getCart();
+      const street  = document.getElementById('street').value.trim();
+      const city    = document.getElementById('city').value.trim();
+      const state   = document.getElementById('state').value.trim();
+      const zipCode = document.getElementById('zipCode').value.trim();
+
+      if (!street || !city || !state || !zipCode) {
+        showToast('⚠️ Please fill in all address fields!'); return;
+      }
+
+      const subtotal   = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+      const totalPrice = subtotal + Math.round(subtotal * 0.18);
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({
+            items: cart.map(i => ({ product: i._id, name: i.name, price: i.price, quantity: i.quantity })),
+            totalPrice,
+            shippingAddress: { street, city, state, zipCode }
+          })
+        });
+        if (res.ok) {
+          saveCart([]); updateCartCount(); closeModal();
+          showToast('🎉 Order placed successfully!');
+          setTimeout(() => window.location.href = 'orders.html', 1800);
+        } else { showToast('Failed to place order. Try again.'); }
+      } catch (err) { showToast('Something went wrong.'); }
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

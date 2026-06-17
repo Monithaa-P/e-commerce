@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zeloa Cart - Login</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">🌿 Zeloa Cart</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="cart.html" class="cart-btn">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </div>
+  </nav>
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">🌿 Zeloa Cart</div>
+      <h2>Welcome Back 👋</h2>
+      <p>Login to your Zeloa Cart account and start shopping!</p>
+      <div class="error-msg" id="error-msg"></div>
+      <div class="form-group">
+        <label>📧 Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>🔒 Password</label>
+        <input type="password" id="password" placeholder="Enter your password" />
+      </div>
+      <button class="auth-btn" onclick="login()">Login to Zeloa Cart →</button>
+      <div class="auth-switch">
+        Don't have an account? <a href="register.html">Sign up free!</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+  <script>
+    async function login() {
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('error-msg');
+      errorMsg.style.display = 'none';
+
+      if (!email || !password) {
+        errorMsg.textContent = '⚠️ Please fill in all fields.';
+        errorMsg.style.display = 'block';
+        return;
+      }
+
+      try {
+        const res  = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          errorMsg.textContent = '❌ ' + (data.message || 'Login failed.');
+          errorMsg.style.display = 'block';
+          return;
+        }
+
+        // Save token and user
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify({ name: data.name, id: data._id }));
+
+        // Restore cart from DB before redirecting
+        try {
+          const cartRes  = await fetch('/api/orders/cart/get', {
+            headers: { 'Authorization': 'Bearer ' + data.token }
+          });
+          const cartData = await cartRes.json();
+          if (Array.isArray(cartData) && cartData.length > 0) {
+            localStorage.setItem('cart', JSON.stringify(cartData));
+          } 
+        } catch (e) {
+          
+        }
+
+        window.location.href = 'index.html';
+
+      } catch (err) {
+        errorMsg.textContent = '❌ Something went wrong. Try again.';
+        errorMsg.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

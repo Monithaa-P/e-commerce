@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zeloa Cart - Wishlist</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">🌿 Zeloa Cart</a>
+    <div class="nav-links">
+      <span id="hello-user" class="hello-user" style="display:none"></span>
+      <a href="index.html">Home</a>
+      <a href="wishlist.html" style="color:#ff6b8a !important;">❤️ Wishlist (<span id="wishlist-count">0</span>)</a>
+      <a href="orders.html" id="orders-link" style="display:none">My Orders</a>
+      <a href="login.html" id="login-link">Login</a>
+      <a href="#" id="logout-link" style="display:none" onclick="logout()">Logout</a>
+      <a href="cart.html" class="cart-btn">🛒 Cart (<span id="cart-count">0</span>)</a>
+    </div>
+  </nav>
+
+  <div class="section" style="max-width:1200px;margin:0 auto;">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">❤️ My Wishlist</h2>
+        <p class="section-subtitle">Items you've saved for later</p>
+      </div>
+      <button onclick="clearWishlist()" style="background:#fff0f0;color:#e74c3c;border:none;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">Clear All</button>
+    </div>
+    <div class="products-grid" id="wishlist-grid"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <footer style="margin-top:3rem;background:#04342C;color:#5DCAA5;text-align:center;padding:1.5rem;font-size:13px;">
+    <p>© 2026 Zeloa Cart — Made with 💚 for CodeAlpha Internship</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/products.js"></script>
+  <script>
+    function renderWishlist() {
+      const wishlist  = getWishlist();
+      const container = document.getElementById('wishlist-grid');
+
+      if (!wishlist.length) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <span>💔</span>
+            <h3>Your wishlist is empty!</h3>
+            <p>Save items you love by clicking the ♡ heart on any product.</p>
+            <br/><a href="index.html">Start Shopping →</a>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = wishlist.map(product => {
+        const starsHTML    = renderStars(product.rating || 4);
+        const oldPriceHTML = product.oldPrice ? `<span class="old-price">₹${product.oldPrice.toLocaleString()}</span>` : '';
+        const productJSON  = JSON.stringify(product).replace(/"/g, '&quot;');
+        return `
+          <div class="product-card" data-category="${product.category}" data-id="${product._id}">
+            <button class="card-wishlist" style="color:#ff4757;"
+              onclick="event.stopPropagation(); removeFromWishlist('${product._id}')">❤️</button>
+            <div class="card-img" onclick="goToProduct('${product._id}')">
+              <img src="${product.image}" alt="${product.name}" loading="lazy"
+                onerror="this.parentElement.innerHTML='<div style=&quot;display:flex;align-items:center;justify-content:center;height:100%;font-size:60px;background:#E1F5EE&quot;>${product.emoji}</div>'" />
+            </div>
+            <div class="card-body">
+              <div class="card-category">${product.category}</div>
+              <div class="card-name">${product.name}</div>
+              <div class="stars">${starsHTML}<span class="rating-count">(${(product.reviews||0).toLocaleString()})</span></div>
+              <div class="card-footer">
+                <div class="price-block">
+                  ${oldPriceHTML}
+                  <span class="price">₹${product.price.toLocaleString()}</span>
+                </div>
+                <button class="add-btn" onclick="event.stopPropagation(); addToCart(${productJSON}); removeFromWishlist('${product._id}')">+</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function removeFromWishlist(id) {
+      let wishlist = getWishlist();
+      wishlist     = wishlist.filter(p => p._id !== id);
+      saveWishlist(wishlist);
+      updateWishlistCount();
+      renderWishlist();
+      showToast('💔 Removed from wishlist');
+    }
+
+    function clearWishlist() {
+      saveWishlist([]);
+      updateWishlistCount();
+      renderWishlist();
+      showToast('🗑️ Wishlist cleared');
+    }
+
+    function goToProduct(id) {
+      sessionStorage.setItem('scrollPos', window.scrollY);
+      window.location.href = `product.html?id=${id}`;
+    }
+
+    renderWishlist();
+  </script>
+</body>
+</html>
